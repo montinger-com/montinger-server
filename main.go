@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/montinger-com/montinger-server/api"
 	"github.com/montinger-com/montinger-server/config"
 	"github.com/rashintha/logger"
 )
@@ -10,5 +11,5 @@ func init() {
 }
 
 func main() {
-	logger.Defaultln("Server started")
+	api.Run(config.HOST + ":" + config.PORT)
 }
