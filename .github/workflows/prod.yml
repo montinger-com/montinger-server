@@ -31,10 +31,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Test
-        run: |
-          whoami
-
       - name: Teriminating running containers
         run: |
           docker-compose down
