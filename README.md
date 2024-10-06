@@ -8,5 +8,5 @@
 ## Contributors
 
 <a href = "https://github.com/montinger-com/montinger-server/graphs/contributors">
-  <img src = "https://contrib.rocks/image?repo = montinger-com/montinger-server"/>
+  <img src = "https://contrib.rocks/image?repo=montinger-com/montinger-server"/>
 </a>
