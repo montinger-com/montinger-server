@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/montinger-com/montinger-server/config"
+	"github.com/montinger-com/montinger-server/lib/utilities"
 )
 
 type TokenPayload struct {
@@ -102,4 +103,34 @@ func ValidateAccessToken(tokenEncoded string) (*jwt.Token, error) {
 	})
 
 	return tk, err
+}
+
+func ValidateRefreshToken(tokenEncoded string) (*jwt.Token, error) {
+	return jwt.Parse(tokenEncoded, func(token *jwt.Token) (interface{}, error) {
+		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
+			return nil, fmt.Errorf("invalid token %v", token.Header["alg"])
+		}
+
+		return []byte(config.JWT_REFRESH_SECRET), nil
+	})
+}
+
+func GetTokenData(claimData jwt.Claims) (*TokenPayload, error) {
+	claims, ok := claimData.(jwt.MapClaims)
+	if !ok {
+		return &TokenPayload{}, fmt.Errorf("invalid token: claim data is not of type jwt.MapClaims")
+	}
+
+	dataMap, ok := claims["data"].(map[string]interface{})
+	if !ok {
+		return &TokenPayload{}, fmt.Errorf("invalid token: data claim not found")
+	}
+
+	// Use the PopulateFromDataMap function to create a TokenPayload
+	var payload TokenPayload
+	err := utilities.AutoMapper(dataMap, &payload)
+	if err != nil {
+		return &TokenPayload{}, fmt.Errorf("invalid token: data claim not found")
+	}
+	return &payload, nil
 }
