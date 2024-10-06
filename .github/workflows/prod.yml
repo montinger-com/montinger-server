@@ -35,6 +35,11 @@ jobs:
         run: |
           docker-compose down
       
+      - name: Test
+        run: |
+          echo ${{ vars.PORT }}
+          echo ${{ secrets.DB_HOST }}
+
       - name: Deploy
         run: |
           docker-compose --profile production up --build -d
