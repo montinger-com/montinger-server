@@ -33,7 +33,7 @@ jobs:
 
       - name: Teriminating running containers
         run: |
-          docker-compose down
+          docker-compose --profile production down
 
       - name: Deploy
         run: |
