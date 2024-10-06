@@ -31,14 +31,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Teriminating running containers
-        run: |
-          docker-compose down
-      
       - name: Test
         run: |
           echo ${{ vars.PORT }}
           echo ${{ secrets.DB_HOST }}
+
+      - name: Teriminating running containers
+        run: |
+          docker-compose down
 
       - name: Deploy
         run: |
