@@ -3,6 +3,7 @@ package exceptions
 import "errors"
 
 var (
+	InvalidatedToken            = errors.New("invalid user token")
 	InvalidInput                = errors.New("invalid input")
 	InvalidToken                = errors.New("invalid token")
 	InvalidUsernameOrPassword   = errors.New("username or password invalid")
