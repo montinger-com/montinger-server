@@ -19,6 +19,7 @@ func init() {
 		sysVars = os.Environ()
 	} else {
 		sysVars = strings.FieldsFunc(string(data), split)
+		sysVars = append(sysVars, os.Environ()...)
 	}
 
 	for _, val := range sysVars {

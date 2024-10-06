@@ -1,0 +1,28 @@
+services:
+  montinger-server-prod:
+    container_name: montinger-server-${APP_ENV}
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:3000"
+    environment:
+      GO111MODULE: on
+      MODE: ${MODE}
+      APP_ENV: ${APP_ENV}
+      HOST: ${HOST}
+      PORT: ${PORT}
+      DB_TYPE: ${DB_TYPE}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      ISSUER: ${ISSUER}
+      JWT_ACCESS_EXPIRES_IN_SECONDS: ${JWT_ACCESS_EXPIRES_IN_SECONDS}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
+      JWT_REFRESH_EXPIRES_IN_SECONDS: ${JWT_REFRESH_EXPIRES_IN_SECONDS}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+    profiles:
+      - production

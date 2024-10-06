@@ -7,9 +7,9 @@ import (
 )
 
 func init() {
-	logger.Defaultln("Starting server on " + config.HOST + ":" + config.PORT)
+	logger.Defaultln("Starting server on " + config.HOST + ":3000")
 }
 
 func main() {
-	api.Run(config.HOST + ":" + config.PORT)
+	api.Run(config.HOST + ":3000")
 }

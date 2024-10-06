@@ -1,0 +1,40 @@
+name: Deploy to production
+
+on:
+  push:
+    branches:
+      - release/prod
+
+env:
+  APP_ENV: ${{ vars.APP_ENV }}
+  MODE: ${{ vars.MODE }}
+  HOST: ${{ vars.HOST }}
+  PORT: ${{ vars.PORT }}
+  DB_TYPE: ${{ vars.DB_TYPE }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASS: ${{ secrets.DB_PASS }}
+  DB_NAME: ${{ vars.DB_NAME }}
+  ISSUER: ${{ vars.ISSUER }}
+  JWT_ACCESS_EXPIRES_IN_SECONDS: ${{ vars.JWT_ACCESS_EXPIRES_IN_SECONDS }}
+  JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
+  JWT_REFRESH_EXPIRES_IN_SECONDS: ${{ vars.JWT_REFRESH_EXPIRES_IN_SECONDS }}
+  JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: sudocod-web01
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Teriminating running containers
+        run: |
+          docker compose down
+      
+      - name: Deploy
+        run: |
+          docker compose --profile production up --build -d
