@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	users_model "github.com/montinger-com/montinger-server/app/users/models"
+	"github.com/montinger-com/montinger-server/app/utils/helpers"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -35,4 +36,16 @@ func (r *UserRepository) GetByEmail(email string) (*users_model.User, error) {
 	}
 
 	return &user, nil
+}
+
+func (r *UserRepository) Create(user *users_model.User) error {
+
+	collection := r.collection()
+	created, err := collection.InsertOne(ctx, user)
+	if err != nil {
+		return err
+	}
+	user.ID = helpers.ObjectIDToString(created.InsertedID)
+
+	return nil
 }

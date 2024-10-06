@@ -10,4 +10,5 @@ func Init(router *gin.Engine) {
 	authRoutes := router.Group("/auth")
 
 	authRoutes.POST("/login", validators.ValidateJsonBody[auth_model.LoginDTO], login)
+	authRoutes.POST("/register", validators.ValidateJsonBody[auth_model.RegisterDTO], register)
 }
