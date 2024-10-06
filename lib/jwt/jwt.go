@@ -1,10 +1,13 @@
 package jwt_utils
 
 import (
+	"fmt"
 	"log"
 	"reflect"
+	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/montinger-com/montinger-server/config"
 )
@@ -73,4 +76,30 @@ func GenerateDataMap(payload TokenPayload) map[string]interface{} {
 	}
 
 	return data
+}
+
+func GetToken(c *gin.Context) string {
+	authHeader := c.GetHeader("Authorization")
+	token := strings.Replace(authHeader, "Bearer ", "", 1)
+	return token
+}
+
+func ValidateAccessToken(tokenEncoded string) (*jwt.Token, error) {
+	tk, err := jwt.Parse(tokenEncoded, func(token *jwt.Token) (interface{}, error) {
+
+		if _, isValid := token.Method.(*jwt.SigningMethodHMAC); !isValid {
+			return nil, fmt.Errorf("invalid token %v", token.Header["alg"])
+		}
+
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); ok {
+			if token.Header["alg"] != "HS256" {
+				return nil, fmt.Errorf("invalid token signing algorithm: %v", token.Header["alg"])
+			}
+			return []byte(config.JWT_ACCESS_SECRET), nil
+		}
+
+		return nil, fmt.Errorf("invalid token signing method")
+	})
+
+	return tk, err
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/montinger-com/montinger-server/api/controllers"
 	"github.com/montinger-com/montinger-server/app/utils/response"
+	"github.com/montinger-com/montinger-server/app/utils/token"
 	"github.com/montinger-com/montinger-server/config"
 	cors_utils "github.com/montinger-com/montinger-server/lib/cors"
 	"github.com/rashintha/logger"
@@ -23,6 +24,7 @@ func init() {
 	router.SetTrustedProxies(nil)
 	router.Use(cors_utils.CORS())
 	router.Use(requestid.New())
+	router.Use(token.Interceptor())
 	router.Use(response.Interceptor())
 	router.Use(response.Log())
 
