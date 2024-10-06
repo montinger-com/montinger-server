@@ -12,6 +12,7 @@ import (
 	users_model "github.com/montinger-com/montinger-server/app/users/models"
 	users_services "github.com/montinger-com/montinger-server/app/users/services"
 	"github.com/montinger-com/montinger-server/lib/exceptions"
+	jwt_utils "github.com/montinger-com/montinger-server/lib/jwt"
 
 	"github.com/montinger-com/montinger-server/app/utils/helpers"
 )
@@ -26,13 +27,13 @@ func init() {
 
 func login(c *gin.Context) {
 	loginDTO := helpers.GetJsonBody[auth_model.LoginDTO](c)
-	token, err := authService.AuthenticateUser(loginDTO.Email, loginDTO.Password)
+	tokens, err := authService.AuthenticateUser(loginDTO.Email, loginDTO.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response_model.Result{Message: exceptions.InvalidUsernameOrPassword.Error(), Errors: []string{err.Error()}})
 		return
 	}
 
-	c.JSON(http.StatusOK, response_model.Result{Data: token})
+	c.JSON(http.StatusOK, response_model.Result{Data: tokens})
 }
 
 func register(c *gin.Context) {
@@ -57,4 +58,22 @@ func register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, response_model.Result{Data: user})
+}
+
+func refreshAccessToken(c *gin.Context) {
+	token := jwt_utils.GetToken(c)
+
+	userId, email, alias, err := authService.GetRefreshTokenData(token)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, response_model.Result{Message: exceptions.InvalidatedToken.Error(), Errors: []string{err.Error()}})
+		return
+	}
+
+	tokens, err := authService.GetAuthorizedTokens(userId, email, alias)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, response_model.Result{Message: exceptions.InvalidatedToken.Error(), Errors: []string{err.Error()}})
+		return
+	}
+
+	c.JSON(http.StatusOK, response_model.Result{Data: tokens})
 }
