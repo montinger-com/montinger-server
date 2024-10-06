@@ -17,8 +17,7 @@ jobs:
 
       - name: Test
         run: |
-          echo ${{ vars.PORT }}
-          echo ${{ secrets.DB_HOST }}
+          echo ${{ vars.PORT }} && echo ${{ secrets.DB_HOST }}
 
       - name: Teriminating running containers
         run: |
