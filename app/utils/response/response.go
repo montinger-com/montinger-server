@@ -37,6 +37,12 @@ func (r responseBodyWriter) Write(b []byte) (int, error) {
 
 func Interceptor() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		if strings.HasPrefix(c.Request.URL.Path, "/metrics") {
+			c.Next()
+			return
+		}
+
 		wb := &responseBodyWriter{
 			body:           &bytes.Buffer{},
 			ResponseWriter: c.Writer,

@@ -13,6 +13,7 @@ import (
 	"github.com/prometheus/client_golang/api"
 	v1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -29,13 +30,17 @@ func init() {
 	prometheus.MustRegister(cpuUsage)
 }
 
-func metricsHandler(c *gin.Context) {
+func metricsHandler() gin.HandlerFunc {
 
 	randomNumber := rand.Intn(101)
 	percentage := float64(randomNumber)
 	cpuUsage.WithLabelValues("server-01").Set(percentage)
 
-	c.Status(http.StatusOK)
+	h := promhttp.Handler()
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
 }
 
 func queryPrometheus(c *gin.Context) {

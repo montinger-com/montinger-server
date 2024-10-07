@@ -2,6 +2,7 @@ package token
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
@@ -13,7 +14,7 @@ import (
 func Interceptor() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		if c.Request.Method == "OPTIONS" || c.Request.URL.Path == "/auth/login" || c.Request.URL.Path == "/metrics" || c.Request.URL.Path == "/metrics/prometheus" {
+		if c.Request.Method == "OPTIONS" || c.Request.URL.Path == "/auth/login" || strings.HasPrefix(c.Request.URL.Path, "/metrics") {
 			c.Next()
 			return
 		}
