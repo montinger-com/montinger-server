@@ -8,6 +8,7 @@ import (
 	"github.com/montinger-com/montinger-server/app/utils/response"
 	"github.com/montinger-com/montinger-server/app/utils/token"
 	"github.com/montinger-com/montinger-server/config"
+	"github.com/montinger-com/montinger-server/lib/cache"
 	cors_utils "github.com/montinger-com/montinger-server/lib/cors"
 	"github.com/rashintha/logger"
 )
@@ -18,6 +19,8 @@ func init() {
 	if config.MODE == "production" {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	cache.Init()
 
 	router = gin.Default()
 

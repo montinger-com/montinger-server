@@ -26,6 +26,10 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
       PROMETHEUS_HOST: ${PROMETHEUS_HOST}
       PROMETHEUS_PORT: ${PROMETHEUS_PORT}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASS: ${REDIS_PASS}
+      REDIS_DB: ${REDIS_DB}
     profiles:
       - production
     networks:
