@@ -28,6 +28,11 @@ var JWT_REFRESH_SECRET string
 var PROMETHEUS_HOST string
 var PROMETHEUS_PORT string
 
+var REDIS_HOST string
+var REDIS_PORT string
+var REDIS_PASS string
+var REDIS_DB int
+
 func init() {
 	HOST = env.CONF["HOST"]
 	PORT = env.CONF["PORT"]
@@ -60,4 +65,9 @@ func init() {
 
 	PROMETHEUS_HOST = env.CONF["PROMETHEUS_HOST"]
 	PROMETHEUS_PORT = env.CONF["PROMETHEUS_PORT"]
+
+	REDIS_HOST = env.CONF["REDIS_HOST"]
+	REDIS_PORT = env.CONF["REDIS_PORT"]
+	REDIS_PASS = env.CONF["REDIS_PASS"]
+	REDIS_DB, _ = strconv.Atoi(env.CONF["REDIS_DB"])
 }
