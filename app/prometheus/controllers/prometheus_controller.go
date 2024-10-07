@@ -48,7 +48,7 @@ func queryPrometheus(c *gin.Context) {
 
 	// Create a new API client for Prometheus
 	client, err := api.NewClient(api.Config{
-		Address: "http://localhost:9090", // Replace with your Prometheus server address
+		Address: "http://prometheus-production:9090", // Replace with your Prometheus server address
 	})
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("error creating Prometheus client: %w", err))
