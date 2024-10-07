@@ -26,6 +26,7 @@ jobs:
       JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
       JWT_REFRESH_EXPIRES_IN_SECONDS: ${{ vars.JWT_REFRESH_EXPIRES_IN_SECONDS }}
       JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+      PROMETHEUS_PORT: ${{ vars.PROMETHEUS_PORT }}
 
     steps:
       - name: Checkout
