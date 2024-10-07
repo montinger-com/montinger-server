@@ -31,16 +31,13 @@ func init() {
 }
 
 func metricsHandler() gin.HandlerFunc {
-
-	randomNumber := rand.Intn(101)
-	percentage := float64(randomNumber)
-	cpuUsage.WithLabelValues("server-01").Set(percentage)
-
-	fmt.Println("Setting CPU usage to", percentage)
-
 	h := promhttp.Handler()
 
 	return func(c *gin.Context) {
+		randomNumber := rand.Intn(101)
+		percentage := float64(randomNumber)
+		cpuUsage.WithLabelValues("server-01").Set(percentage)
+
 		h.ServeHTTP(c.Writer, c.Request)
 	}
 }
