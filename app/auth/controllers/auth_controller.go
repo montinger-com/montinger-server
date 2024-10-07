@@ -22,7 +22,7 @@ var usersService users_services.UsersService
 
 func init() {
 	authService = *auth_services.NewAuthService()
-	usersService = *users_services.NewUserService()
+	usersService = *users_services.NewUsersService()
 }
 
 func login(c *gin.Context) {
