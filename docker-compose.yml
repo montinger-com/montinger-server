@@ -26,3 +26,22 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
     profiles:
       - production
+    networks:
+      - montinger-prod-network
+
+  prometheus-prod:
+    container_name: prometheus-${APP_ENV}
+    image: prom/prometheus
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - "--storage.tsdb.path=/prometheus"
+    networks:
+      - montinger-prod-network
+
+networks:
+  montinger-prod-network:
