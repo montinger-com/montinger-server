@@ -25,6 +25,9 @@ var JWT_ACCESS_SECRET string
 var JWT_REFRESH_EXPIRES_IN_SECONDS int
 var JWT_REFRESH_SECRET string
 
+var PROMETHEUS_HOST string
+var PROMETHEUS_PORT string
+
 func init() {
 	HOST = env.CONF["HOST"]
 	PORT = env.CONF["PORT"]
@@ -54,4 +57,7 @@ func init() {
 		expiresIn = 60
 	}
 	JWT_REFRESH_EXPIRES_IN_SECONDS = expiresIn
+
+	PROMETHEUS_HOST = env.CONF["PROMETHEUS_HOST"]
+	PROMETHEUS_PORT = env.CONF["PROMETHEUS_PORT"]
 }

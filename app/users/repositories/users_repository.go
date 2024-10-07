@@ -12,21 +12,21 @@ import (
 
 var ctx = context.Background()
 
-type UserRepository struct {
+type UsersRepository struct {
 	db *mongo.Database
 }
 
-func NewUserRepository(db *mongo.Database) *UserRepository {
-	return &UserRepository{db}
+func NewUsersRepository(db *mongo.Database) *UsersRepository {
+	return &UsersRepository{db}
 }
 
-func (r *UserRepository) collection() *mongo.Collection {
-	tenantMediaKey := fmt.Sprintf("%s", "users")
-	collection := r.db.Collection(tenantMediaKey)
+func (r *UsersRepository) collection() *mongo.Collection {
+	collectionName := fmt.Sprintf("%s", "users")
+	collection := r.db.Collection(collectionName)
 	return collection
 }
 
-func (r *UserRepository) GetByEmail(email string) (*users_model.User, error) {
+func (r *UsersRepository) GetByEmail(email string) (*users_model.User, error) {
 	var user users_model.User
 	filter := bson.M{"email": email, "status": bson.M{"$ne": "deleted"}}
 
@@ -38,8 +38,7 @@ func (r *UserRepository) GetByEmail(email string) (*users_model.User, error) {
 	return &user, nil
 }
 
-func (r *UserRepository) Create(user *users_model.User) error {
-
+func (r *UsersRepository) Create(user *users_model.User) error {
 	collection := r.collection()
 	created, err := collection.InsertOne(ctx, user)
 	if err != nil {
