@@ -11,18 +11,18 @@ import (
 )
 
 type UsersService struct {
-	userRepo *users_repository.UserRepository
+	usersRepo *users_repository.UsersRepository
 }
 
-func NewUserService() *UsersService {
+func NewUsersService() *UsersService {
 
 	return &UsersService{
-		userRepo: users_repository.NewUserRepository(db.MongoClient),
+		usersRepo: users_repository.NewUsersRepository(db.MongoClient),
 	}
 }
 
 func (s *UsersService) GetByEmail(email string) (*users_model.User, error) {
-	return s.userRepo.GetByEmail(email)
+	return s.usersRepo.GetByEmail(email)
 }
 
 func (s *UsersService) Create(user *users_model.User) (*users_model.User, error) {
@@ -38,7 +38,7 @@ func (s *UsersService) Create(user *users_model.User) (*users_model.User, error)
 		CreatedAt: time.Now().UTC(),
 	}
 
-	if err := s.userRepo.Create(userData); err != nil {
+	if err := s.usersRepo.Create(userData); err != nil {
 		return nil, err
 	}
 

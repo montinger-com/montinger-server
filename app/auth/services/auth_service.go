@@ -13,12 +13,12 @@ import (
 )
 
 type AuthService struct {
-	userRepo *users_repository.UserRepository
+	userRepo *users_repository.UsersRepository
 }
 
 func NewAuthService() *AuthService {
 	return &AuthService{
-		userRepo: users_repository.NewUserRepository(db.MongoClient),
+		userRepo: users_repository.NewUsersRepository(db.MongoClient),
 	}
 }
 
