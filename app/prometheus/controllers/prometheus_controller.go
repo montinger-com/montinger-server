@@ -36,6 +36,8 @@ func metricsHandler() gin.HandlerFunc {
 	percentage := float64(randomNumber)
 	cpuUsage.WithLabelValues("server-01").Set(percentage)
 
+	fmt.Println("Setting CPU usage to", percentage)
+
 	h := promhttp.Handler()
 
 	return func(c *gin.Context) {
