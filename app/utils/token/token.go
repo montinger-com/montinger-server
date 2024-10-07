@@ -13,7 +13,7 @@ import (
 func Interceptor() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		if c.Request.Method == "OPTIONS" || c.Request.URL.Path == "/auth/login" {
+		if c.Request.Method == "OPTIONS" || c.Request.URL.Path == "/auth/login" || c.Request.URL.Path == "/metrics" || c.Request.URL.Path == "/metrics/prometheus" {
 			c.Next()
 			return
 		}
