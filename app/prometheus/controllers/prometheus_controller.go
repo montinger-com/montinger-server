@@ -56,8 +56,10 @@ func metricsHandler() gin.HandlerFunc {
 		}
 
 		for _, monitor := range monitors {
-			memoryUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.MemoryUsage)
-			cpuUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.CPUUsage)
+			if monitor.Type == "server" {
+				memoryUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.MemoryUsage)
+				cpuUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.CPUUsage)
+			}
 		}
 
 		h.ServeHTTP(c.Writer, c.Request)
