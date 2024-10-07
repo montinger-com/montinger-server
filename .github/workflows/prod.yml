@@ -28,6 +28,10 @@ jobs:
       JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
       PROMETHEUS_HOST: ${{ vars.PROMETHEUS_HOST }}
       PROMETHEUS_PORT: ${{ vars.PROMETHEUS_PORT }}
+      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_PORT: ${{ secrets.REDIS_PORT }}
+      REDIS_PASS: ${{ secrets.REDIS_PASS }}
+      REDIS_DB: ${{ vars.REDIS_DB }}
 
     steps:
       - name: Checkout
