@@ -45,3 +45,6 @@ services:
 
 networks:
   montinger-prod-network:
+
+volumes:
+  prometheus-data:
