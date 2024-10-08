@@ -88,3 +88,42 @@ func sanitize(v interface{}) {
 		}
 	}
 }
+
+func ValidatePathParams[PathParamType any](c *gin.Context) {
+
+	var pathParams PathParamType
+
+	err := c.ShouldBindUri(&pathParams)
+	if err != nil {
+
+		c.JSON(http.StatusBadRequest, response_model.Result{
+			Message: exceptions.RequestParamsValidationFailed.Error(),
+			Errors:  []string{err.Error()},
+		})
+		c.Abort()
+		return
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(pathParams); err != nil {
+		var validationErrors []string
+		for _, errData := range err.(validator.ValidationErrors) {
+			validationErrors = append(validationErrors, formatValidationError(errData))
+		}
+
+		c.JSON(http.StatusBadRequest, response_model.Result{
+			Message: exceptions.RequestParamsValidationFailed.Error(),
+			Errors:  validationErrors,
+		})
+		c.Abort()
+		return
+	}
+
+	// Sanitize the parsed path parameters
+	sanitize(&pathParams)
+
+	c.Set("params", pathParams)
+
+	c.Next()
+
+}
