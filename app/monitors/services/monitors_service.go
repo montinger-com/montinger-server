@@ -2,6 +2,7 @@ package monitors_services
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	monitors_model "github.com/montinger-com/montinger-server/app/monitors/models"
@@ -83,10 +84,11 @@ func (s *MonitorsService) Register(monitor *monitors_model.MonitorRegisterDTO) (
 	}
 
 	monitorCreate := &monitors_model.Monitor{
-		Name:   monitorCacheMap["name"].(string),
-		Type:   monitorCacheMap["type"].(string),
-		Status: monitorCacheMap["status"].(string),
-		APIKey: fmt.Sprintf("%v-%v", uuid, secret),
+		Name:      monitorCacheMap["name"].(string),
+		Type:      monitorCacheMap["type"].(string),
+		Status:    monitorCacheMap["status"].(string),
+		APIKey:    fmt.Sprintf("%v-%v", uuid, secret),
+		CreatedAt: time.Now(),
 	}
 
 	err = s.monitorsRepo.Create(monitorCreate)
@@ -128,7 +130,7 @@ func (s *MonitorsService) Push(id string, monitor *monitors_model.MonitorPushDTO
 		MemoryUsage: monitor.LastData.MemoryUsage,
 	}
 
-	err = s.monitorsRepo.Update(monitorDB)
+	err = s.monitorsRepo.UpdateLastData(monitorDB)
 	if err != nil {
 		logger.Errorf("Error updating monitor: %v", err.Error())
 		return err

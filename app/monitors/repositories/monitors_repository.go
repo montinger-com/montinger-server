@@ -3,6 +3,7 @@ package monitors_repository
 import (
 	"context"
 	"fmt"
+	"time"
 
 	monitors_model "github.com/montinger-com/montinger-server/app/monitors/models"
 	"github.com/montinger-com/montinger-server/app/utils/helpers"
@@ -74,10 +75,19 @@ func (r *MonitorsRepository) GetByID(id string) (*monitors_model.Monitor, error)
 	return &monitor, nil
 }
 
-func (r *MonitorsRepository) Update(monitor *monitors_model.Monitor) error {
+func (r *MonitorsRepository) UpdateLastData(monitor *monitors_model.Monitor) error {
 	collection := r.collection()
 
-	_, err := collection.UpdateOne(ctx, bson.M{"_id": monitor.ID, "status": bson.M{"$eq": "active"}}, bson.M{"$set": monitor})
+	update := bson.M{"$set": bson.M{
+		"last_data_on": time.Now(),
+		"last_data": bson.M{
+			"cpu_usage":    monitor.LastData.CPUUsage,
+			"memory_usage": monitor.LastData.MemoryUsage,
+		},
+	}}
+
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": monitor.ID, "status": bson.M{"$eq": "active"}}, update)
+
 	if err != nil {
 		return err
 	}
