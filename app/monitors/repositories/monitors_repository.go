@@ -5,7 +5,9 @@ import (
 	"fmt"
 
 	monitors_model "github.com/montinger-com/montinger-server/app/monitors/models"
+	"github.com/montinger-com/montinger-server/app/utils/helpers"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -41,4 +43,46 @@ func (r *MonitorsRepository) GetAll() ([]*monitors_model.Monitor, error) {
 	}
 
 	return monitors, nil
+}
+
+func (r *MonitorsRepository) Create(monitor *monitors_model.Monitor) error {
+	collection := r.collection()
+
+	created, err := collection.InsertOne(ctx, monitor)
+	if err != nil {
+		return err
+	}
+	monitor.ID = helpers.ObjectIDToString(created.InsertedID)
+
+	return nil
+}
+
+func (r *MonitorsRepository) GetByID(id string) (*monitors_model.Monitor, error) {
+	collection := r.collection()
+
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var monitor monitors_model.Monitor
+	err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&monitor)
+	if err != nil {
+		return nil, err
+	}
+
+	return &monitor, nil
+}
+
+func (r *MonitorsRepository) Update(monitor *monitors_model.Monitor) error {
+	collection := r.collection()
+
+	fmt.Println(monitor.LastData)
+
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": monitor.ID}, bson.M{"$set": monitor})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

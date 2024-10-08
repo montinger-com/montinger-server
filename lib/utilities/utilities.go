@@ -1,6 +1,11 @@
 package utilities
 
-import "github.com/mitchellh/mapstructure"
+import (
+	"crypto/rand"
+	"encoding/hex"
+
+	"github.com/mitchellh/mapstructure"
+)
 
 func AutoMapper(source interface{}, target interface{}) error {
 	config := &mapstructure.DecoderConfig{
@@ -20,4 +25,12 @@ func AutoMapper(source interface{}, target interface{}) error {
 	}
 
 	return nil
+}
+
+func GenerateSecret(length int) (string, error) {
+	bytes := make([]byte, length)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(bytes), nil
 }
