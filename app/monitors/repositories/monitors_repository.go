@@ -92,6 +92,7 @@ func (r *MonitorsRepository) UpdateLastData(monitor *monitors_model.Monitor) err
 	}}
 
 	_, err = collection.UpdateOne(ctx, bson.M{"_id": objectId, "status": bson.M{"$eq": "active"}}, update)
+
 	if err != nil {
 		return err
 	}
