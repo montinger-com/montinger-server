@@ -23,10 +23,6 @@ func NewRedisClient(address string, password string, db int) *RedisClient {
 		DB:       db,
 	})
 
-	fmt.Println(address)
-	fmt.Println(password)
-	fmt.Println(db)
-
 	return &RedisClient{Client: client}
 }
 
