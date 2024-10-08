@@ -78,6 +78,11 @@ func (r *MonitorsRepository) GetByID(id string) (*monitors_model.Monitor, error)
 func (r *MonitorsRepository) UpdateLastData(monitor *monitors_model.Monitor) error {
 	collection := r.collection()
 
+	objectId, err := primitive.ObjectIDFromHex(monitor.ID)
+	if err != nil {
+		return err
+	}
+
 	update := bson.M{"$set": bson.M{
 		"last_data_on": time.Now(),
 		"last_data": bson.M{
@@ -86,7 +91,7 @@ func (r *MonitorsRepository) UpdateLastData(monitor *monitors_model.Monitor) err
 		},
 	}}
 
-	_, err := collection.UpdateOne(ctx, bson.M{"_id": monitor.ID, "status": bson.M{"$eq": "active"}}, update)
+	_, err = collection.UpdateOne(ctx, bson.M{"_id": objectId, "status": bson.M{"$eq": "active"}}, update)
 	if err != nil {
 		return err
 	}
