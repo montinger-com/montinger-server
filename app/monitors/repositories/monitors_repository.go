@@ -3,6 +3,7 @@ package monitors_repository
 import (
 	"context"
 	"fmt"
+	"time"
 
 	monitors_model "github.com/montinger-com/montinger-server/app/monitors/models"
 	"github.com/montinger-com/montinger-server/app/utils/helpers"
@@ -66,7 +67,7 @@ func (r *MonitorsRepository) GetByID(id string) (*monitors_model.Monitor, error)
 	}
 
 	var monitor monitors_model.Monitor
-	err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&monitor)
+	err = collection.FindOne(ctx, bson.M{"_id": objectId, "status": bson.M{"$eq": "active"}}).Decode(&monitor)
 	if err != nil {
 		return nil, err
 	}
@@ -74,12 +75,18 @@ func (r *MonitorsRepository) GetByID(id string) (*monitors_model.Monitor, error)
 	return &monitor, nil
 }
 
-func (r *MonitorsRepository) Update(monitor *monitors_model.Monitor) error {
+func (r *MonitorsRepository) UpdateLastData(monitor *monitors_model.Monitor) error {
 	collection := r.collection()
 
-	fmt.Println(monitor.LastData)
+	update := bson.M{"$set": bson.M{
+		"last_data_on": time.Now(),
+		"last_data": bson.M{
+			"cpu_usage":    monitor.LastData.CPUUsage,
+			"memory_usage": monitor.LastData.MemoryUsage,
+		},
+	}}
 
-	_, err := collection.UpdateOne(ctx, bson.M{"_id": monitor.ID}, bson.M{"$set": monitor})
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": monitor.ID, "status": bson.M{"$eq": "active"}}, update)
 	if err != nil {
 		return err
 	}
