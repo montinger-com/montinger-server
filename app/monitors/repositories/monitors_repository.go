@@ -66,7 +66,7 @@ func (r *MonitorsRepository) GetByID(id string) (*monitors_model.Monitor, error)
 	}
 
 	var monitor monitors_model.Monitor
-	err = collection.FindOne(ctx, bson.M{"_id": objectId}).Decode(&monitor)
+	err = collection.FindOne(ctx, bson.M{"_id": objectId, "status": bson.M{"$eq": "active"}}).Decode(&monitor)
 	if err != nil {
 		return nil, err
 	}
@@ -77,9 +77,7 @@ func (r *MonitorsRepository) GetByID(id string) (*monitors_model.Monitor, error)
 func (r *MonitorsRepository) Update(monitor *monitors_model.Monitor) error {
 	collection := r.collection()
 
-	fmt.Println(monitor.LastData)
-
-	_, err := collection.UpdateOne(ctx, bson.M{"_id": monitor.ID}, bson.M{"$set": monitor})
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": monitor.ID, "status": bson.M{"$eq": "active"}}, bson.M{"$set": monitor})
 	if err != nil {
 		return err
 	}
