@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/montinger-com/montinger-server/config"
 	"github.com/montinger-com/montinger-server/lib/utilities"
@@ -77,12 +75,6 @@ func GenerateDataMap(payload TokenPayload) map[string]interface{} {
 	}
 
 	return data
-}
-
-func GetToken(c *gin.Context) string {
-	authHeader := c.GetHeader("Authorization")
-	token := strings.Replace(authHeader, "Bearer ", "", 1)
-	return token
 }
 
 func ValidateAccessToken(tokenEncoded string) (*jwt.Token, error) {

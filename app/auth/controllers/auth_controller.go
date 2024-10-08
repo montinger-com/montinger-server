@@ -12,7 +12,6 @@ import (
 	users_model "github.com/montinger-com/montinger-server/app/users/models"
 	users_services "github.com/montinger-com/montinger-server/app/users/services"
 	"github.com/montinger-com/montinger-server/lib/exceptions"
-	jwt_utils "github.com/montinger-com/montinger-server/lib/jwt"
 
 	"github.com/montinger-com/montinger-server/app/utils/helpers"
 )
@@ -61,7 +60,7 @@ func register(c *gin.Context) {
 }
 
 func refreshAccessToken(c *gin.Context) {
-	token := jwt_utils.GetToken(c)
+	token := helpers.GetAuthToken(c)
 
 	userId, email, alias, err := authService.GetRefreshTokenData(token)
 	if err != nil {

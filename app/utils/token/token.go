@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/montinger-com/montinger-server/app/shared/models/response_model"
+	"github.com/montinger-com/montinger-server/app/utils/helpers"
 	"github.com/montinger-com/montinger-server/lib/exceptions"
 	jwt_utils "github.com/montinger-com/montinger-server/lib/jwt"
 )
@@ -14,12 +15,13 @@ import (
 func Interceptor() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		if c.Request.Method == "OPTIONS" || c.Request.URL.Path == "/auth/login" || strings.HasPrefix(c.Request.URL.Path, "/metrics") {
+		if c.Request.Method == "OPTIONS" || c.Request.URL.Path == "/auth/login" || strings.HasPrefix(c.Request.URL.Path, "/metrics") ||
+			c.Request.URL.Path == "/monitors/register" || strings.HasPrefix(c.Request.URL.Path, "/monitors/") && strings.HasSuffix(c.Request.URL.Path, "/push") {
 			c.Next()
 			return
 		}
 
-		token := jwt_utils.GetToken(c)
+		token := helpers.GetAuthToken(c)
 
 		if token == "" {
 			c.JSON(http.StatusUnauthorized, response_model.Result{Message: exceptions.InvalidToken.Error()})
