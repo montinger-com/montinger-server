@@ -30,6 +30,31 @@ func create(c *gin.Context) {
 	c.JSON(http.StatusOK, response_model.Result{Data: tokens})
 }
 
+func getAll(c *gin.Context) {
+	monitors, err := monitorsService.GetAll()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response_model.Result{Message: exceptions.FailedFetchingData.Error(), Errors: []string{err.Error()}})
+		return
+	}
+
+	monitorsResponse := make([]*monitors_model.MonitorResponse, 0)
+	for _, monitor := range monitors {
+		monitorsResponse = append(monitorsResponse, &monitors_model.MonitorResponse{
+			ID:         monitor.ID,
+			Name:       monitor.Name,
+			Type:       monitor.Type,
+			Status:     monitor.Status,
+			LastDataOn: monitor.LastDataOn,
+			LastData:   monitor.LastData,
+
+			CreatedAt: monitor.CreatedAt,
+			UpdatedAt: monitor.UpdatedAt,
+		})
+	}
+
+	c.JSON(http.StatusOK, response_model.Result{Data: monitorsResponse})
+}
+
 func register(c *gin.Context) {
 	monitorDTO := helpers.GetJsonBody[monitors_model.MonitorRegisterDTO](c)
 
@@ -49,9 +74,21 @@ func push(c *gin.Context) {
 
 	err := monitorsService.Push(params.ID, &monitorDTO, apiKey)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, response_model.Result{Message: exceptions.FailedToPushDeviceData.Error(), Errors: []string{err.Error()}})
+		c.JSON(http.StatusBadRequest, response_model.Result{Message: exceptions.FailedToPushData.Error(), Errors: []string{err.Error()}})
 		return
 	}
 
 	c.JSON(http.StatusOK, response_model.Result{Message: "data pushed successfully"})
+}
+
+func getData(c *gin.Context) {
+	query := helpers.GetJsonQuery[monitors_model.MonitorDataQueryParamDTO](c)
+
+	monitors, err := monitorsService.GetDataByMetrics(query.Types, query.TimePeriod)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response_model.Result{Message: exceptions.FailedFetchingData.Error(), Errors: []string{err.Error()}})
+		return
+	}
+
+	c.JSON(http.StatusOK, response_model.Result{Data: monitors})
 }

@@ -7,21 +7,25 @@ import (
 	"github.com/google/uuid"
 	monitors_model "github.com/montinger-com/montinger-server/app/monitors/models"
 	monitors_repository "github.com/montinger-com/montinger-server/app/monitors/repositories"
+	prometheus_services "github.com/montinger-com/montinger-server/app/prometheus/services"
 	"github.com/montinger-com/montinger-server/lib/cache"
 	"github.com/montinger-com/montinger-server/lib/db"
 	"github.com/montinger-com/montinger-server/lib/exceptions"
 	"github.com/montinger-com/montinger-server/lib/utilities"
+	"github.com/prometheus/common/model"
 	"github.com/rashintha/logger"
 )
 
 type MonitorsService struct {
-	monitorsRepo *monitors_repository.MonitorsRepository
+	monitorsRepo      *monitors_repository.MonitorsRepository
+	prometheusService *prometheus_services.PrometheusService
 }
 
 func NewMonitorsService() *MonitorsService {
 
 	return &MonitorsService{
-		monitorsRepo: monitors_repository.NewMonitorsRepository(db.MongoClient),
+		monitorsRepo:      monitors_repository.NewMonitorsRepository(db.MongoClient),
+		prometheusService: prometheus_services.NewPrometheusService(),
 	}
 }
 
@@ -125,7 +129,7 @@ func (s *MonitorsService) Push(id string, monitor *monitors_model.MonitorPushDTO
 		return exceptions.InvalidAPIKey
 	}
 
-	monitorDB.LastData = monitors_model.LastData{
+	monitorDB.LastData = &monitors_model.LastData{
 		CPUUsage:    monitor.LastData.CPUUsage,
 		MemoryUsage: monitor.LastData.MemoryUsage,
 	}
@@ -137,4 +141,31 @@ func (s *MonitorsService) Push(id string, monitor *monitors_model.MonitorPushDTO
 	}
 
 	return nil
+}
+
+func (s *MonitorsService) GetDataByMetrics(metrics []string, timePeriod int) ([]*monitors_model.MonitorDataResponse, error) {
+	responseData := make([]*monitors_model.MonitorDataResponse, 0)
+
+	for _, metric := range metrics {
+		data, err := s.prometheusService.GetDataByMetric(metric, timePeriod)
+		if err != nil {
+			logger.Errorf("Error getting data by metric: %v", err.Error())
+			return nil, err
+		}
+
+		vector := data.(model.Vector)
+		timeUnit := "m"
+
+		for _, v := range vector {
+			responseData = append(responseData, &monitors_model.MonitorDataResponse{
+				ID: string(v.Metric["server_name"]),
+				TimePeriod: &monitors_model.TimePeriod{
+					Duration: &timePeriod,
+					Unit:     &timeUnit,
+				},
+			})
+		}
+	}
+
+	return responseData, nil
 }
