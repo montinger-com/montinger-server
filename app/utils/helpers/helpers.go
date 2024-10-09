@@ -19,6 +19,15 @@ func GetJsonBody[BodyType any](c *gin.Context) BodyType {
 	return data
 }
 
+func GetJsonQuery[BodyType any](c *gin.Context) BodyType {
+	var data BodyType
+	err := utilities.AutoMapper(c.MustGet("query"), &data)
+	if err != nil {
+		logger.Errorln(err.Error())
+	}
+	return data
+}
+
 func IsEmpty(str string) bool {
 	return len(str) == 0 && str != enums.Null
 }

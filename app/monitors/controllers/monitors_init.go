@@ -10,6 +10,8 @@ func Init(router *gin.Engine) {
 	monitorsRoutes := router.Group("/monitors")
 
 	monitorsRoutes.POST("", validators.ValidateJsonBody[monitors_model.MonitorCreateDTO], create)
+	monitorsRoutes.GET("", getAll)
 	monitorsRoutes.POST("/register", validators.ValidateJsonBody[monitors_model.MonitorRegisterDTO], register)
 	monitorsRoutes.POST("/:monitor_id/push", validators.ValidateJsonBody[monitors_model.MonitorPushDTO], validators.ValidatePathParams[monitors_model.IDParamDTO], push)
+	monitorsRoutes.GET("/data", validators.ValidateQueryParams[monitors_model.MonitorDataQueryParamDTO], getData)
 }
