@@ -169,6 +169,10 @@ func (s *MonitorsService) GetDataByMetrics(metrics []string, timePeriod int) ([]
 				}
 			}
 
+			fmt.Printf("contains: %v\n", contains)
+			fmt.Printf("index: %v\n", index)
+			fmt.Printf("responseData: %v\n", responseData)
+
 			if contains {
 				if metric == "memory_usage" {
 					for _, value := range v.Values {
@@ -188,7 +192,6 @@ func (s *MonitorsService) GetDataByMetrics(metrics []string, timePeriod int) ([]
 					}
 				}
 			} else {
-
 				item := &monitors_model.MonitorDataResponse{
 					ID: string(v.Metric["server_name"]),
 					TimePeriod: &monitors_model.TimePeriod{
