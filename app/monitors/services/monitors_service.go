@@ -157,13 +157,58 @@ func (s *MonitorsService) GetDataByMetrics(metrics []string, timePeriod int) ([]
 		timeUnit := "m"
 
 		for _, v := range vector {
-			responseData = append(responseData, &monitors_model.MonitorDataResponse{
+
+			// contains := false
+			// index := 0
+
+			// for i, r := range responseData {
+			// 	if r.ID == string(v.Metric["server_name"]) {
+			// 		contains = true
+			// 		index = i
+			// 		break
+			// 	}
+			// }
+
+			// if contains {
+			// 	responseData[index].TimePeriod.Duration += int(v.Values[0].Value)
+
+			item := &monitors_model.MonitorDataResponse{
 				ID: string(v.Metric["server_name"]),
 				TimePeriod: &monitors_model.TimePeriod{
 					Duration: &timePeriod,
 					Unit:     &timeUnit,
 				},
-			})
+			}
+
+			if metric == "memory_usage" {
+				unit := "%"
+				item.MemoryUsage = &monitors_model.MemoryUsage{
+					Unit: &unit,
+				}
+
+				for _, value := range v.Values {
+					timestamp := value.Timestamp.Time()
+					item.MemoryUsage.Values = append(item.MemoryUsage.Values, monitors_model.UsageIntValue{
+						Time:  &timestamp,
+						Value: float64(value.Value),
+					})
+				}
+			} else if metric == "cpu_usage" {
+				unit := "%"
+				item.CPUUsage = &monitors_model.CPUUsage{
+					Unit: &unit,
+				}
+
+				for _, value := range v.Values {
+					timestamp := value.Timestamp.Time()
+					item.CPUUsage.Values = append(item.CPUUsage.Values, monitors_model.UsageIntValue{
+						Time:  &timestamp,
+						Value: float64(value.Value),
+					})
+				}
+			}
+
+			responseData = append(responseData, item)
 		}
 	}
 
