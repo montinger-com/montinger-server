@@ -169,12 +169,15 @@ func (s *MonitorsService) GetDataByMetrics(metrics []string, timePeriod int) ([]
 				}
 			}
 
-			fmt.Printf("contains: %v\n", contains)
-			fmt.Printf("index: %v\n", index)
-			fmt.Printf("responseData: %v\n", responseData)
-
 			if contains {
 				if metric == "memory_usage" {
+					if responseData[index].MemoryUsage == nil {
+						unit := "%"
+						responseData[index].MemoryUsage = &monitors_model.MemoryUsage{
+							Unit: &unit,
+						}
+					}
+
 					for _, value := range v.Values {
 						timestamp := value.Timestamp.Time()
 						responseData[index].MemoryUsage.Values = append(responseData[index].MemoryUsage.Values, monitors_model.UsageIntValue{
@@ -183,6 +186,13 @@ func (s *MonitorsService) GetDataByMetrics(metrics []string, timePeriod int) ([]
 						})
 					}
 				} else if metric == "cpu_usage" {
+					if responseData[index].CPUUsage == nil {
+						unit := "%"
+						responseData[index].CPUUsage = &monitors_model.CPUUsage{
+							Unit: &unit,
+						}
+					}
+
 					for _, value := range v.Values {
 						timestamp := value.Timestamp.Time()
 						responseData[index].CPUUsage.Values = append(responseData[index].CPUUsage.Values, monitors_model.UsageIntValue{
