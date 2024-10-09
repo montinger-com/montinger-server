@@ -15,7 +15,6 @@ import (
 )
 
 func ValidateJsonBody[BodyType any](c *gin.Context) {
-
 	var body BodyType
 
 	err := c.ShouldBind(&body)
@@ -90,7 +89,6 @@ func sanitize(v interface{}) {
 }
 
 func ValidatePathParams[PathParamType any](c *gin.Context) {
-
 	var pathParams PathParamType
 
 	err := c.ShouldBindUri(&pathParams)
@@ -123,7 +121,40 @@ func ValidatePathParams[PathParamType any](c *gin.Context) {
 	sanitize(&pathParams)
 
 	c.Set("params", pathParams)
-
 	c.Next()
+}
 
+func ValidateQueryParams[QueryParamType any](c *gin.Context) {
+	var queryParams QueryParamType
+
+	err := c.ShouldBindQuery(&queryParams)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response_model.Result{
+			Message: exceptions.RequestQueryValidationFailed.Error(),
+			Errors:  []string{err.Error()},
+		})
+		c.Abort()
+		return
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(queryParams); err != nil {
+		var validationErrors []string
+		for _, errData := range err.(validator.ValidationErrors) {
+			validationErrors = append(validationErrors, formatValidationError(errData))
+		}
+
+		c.JSON(http.StatusBadRequest, response_model.Result{
+			Message: exceptions.RequestQueryValidationFailed.Error(),
+			Errors:  validationErrors,
+		})
+		c.Abort()
+		return
+	}
+
+	// Sanitize the parsed query parameters
+	sanitize(&queryParams)
+
+	c.Set("query", queryParams)
+	c.Next()
 }

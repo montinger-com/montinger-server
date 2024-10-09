@@ -56,7 +56,7 @@ func metricsHandler() gin.HandlerFunc {
 		}
 
 		for _, monitor := range monitors {
-			if monitor.Type == "server" {
+			if monitor.Type == "server" && monitor.LastData != nil && monitor.LastDataOn != nil && !monitor.LastDataOn.Add(1*time.Minute).After(time.Now()) {
 				memoryUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.MemoryUsage)
 				cpuUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.CPUUsage)
 			}
