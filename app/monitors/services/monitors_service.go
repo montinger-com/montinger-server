@@ -153,7 +153,7 @@ func (s *MonitorsService) GetDataByMetrics(metrics []string, timePeriod int) ([]
 			return nil, err
 		}
 
-		vector := data.(model.Vector)
+		vector := data.(model.Matrix)
 		timeUnit := "m"
 
 		for _, v := range vector {
