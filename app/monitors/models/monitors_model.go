@@ -33,8 +33,30 @@ type MonitorResponse struct {
 }
 
 type LastData struct {
-	CPUUsage    float64 `json:"cpu_usage,omitempty" bson:"cpu_usage,omitempty"`
-	MemoryUsage float64 `json:"memory_usage,omitempty" bson:"memory_usage,omitempty"`
+	CPU    *CPU    `json:"cpu,omitempty" bson:"cpu,omitempty"`
+	Memory *Memory `json:"memory,omitempty" bson:"memory,omitempty"`
+	OS     *OS     `json:"os,omitempty" bson:"os,omitempty"`
+	Uptime uint64  `json:"uptime,omitempty" bson:"uptime,omitempty"`
+}
+
+type CPU struct {
+	UsedPercent float64 `json:"used_percent,omitempty" bson:"used_percent,omitempty"`
+}
+
+type Memory struct {
+	Total       uint64  `json:"total,omitempty" bson:"total,omitempty"`
+	Available   uint64  `json:"available,omitempty" bson:"available,omitempty"`
+	Used        uint64  `json:"used,omitempty" bson:"used,omitempty"`
+	UsedPercent float64 `json:"used_percent,omitempty" bson:"used_percent,omitempty"`
+}
+
+type OS struct {
+	Type            string `json:"type,omitempty" bson:"type,omitempty"`
+	Platform        string `json:"platform,omitempty" bson:"platform,omitempty"`
+	PlatformFamily  string `json:"platform_family,omitempty" bson:"platform_family,omitempty"`
+	PlatformVersion string `json:"platform_version,omitempty" bson:"platform_version,omitempty"`
+	KernelVersion   string `json:"kernel_version,omitempty" bson:"kernel_version,omitempty"`
+	KernelArch      string `json:"kernel_arch,omitempty" bson:"kernel_arch,omitempty"`
 }
 
 type MonitorCreateDTO struct {
