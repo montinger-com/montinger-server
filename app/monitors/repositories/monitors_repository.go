@@ -86,8 +86,10 @@ func (r *MonitorsRepository) UpdateLastData(monitor *monitors_model.Monitor) err
 	update := bson.M{"$set": bson.M{
 		"last_data_on": time.Now(),
 		"last_data": bson.M{
-			"cpu_usage":    monitor.LastData.CPUUsage,
-			"memory_usage": monitor.LastData.MemoryUsage,
+			"cpu":    bson.M{"used_percent": monitor.LastData.CPU.UsedPercent},
+			"memory": bson.M{"total": monitor.LastData.Memory.Total, "available": monitor.LastData.Memory.Available, "used": monitor.LastData.Memory.Used, "used_percent": monitor.LastData.Memory.UsedPercent},
+			"os":     bson.M{"type": monitor.LastData.OS.Type, "platform": monitor.LastData.OS.Platform, "platform_family": monitor.LastData.OS.PlatformFamily, "platform_version": monitor.LastData.OS.PlatformVersion, "kernel_version": monitor.LastData.OS.KernelVersion, "kernel_arch": monitor.LastData.OS.KernelArch},
+			"uptime": monitor.LastData.Uptime,
 		},
 	}}
 
