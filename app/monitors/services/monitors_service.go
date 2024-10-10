@@ -130,8 +130,24 @@ func (s *MonitorsService) Push(id string, monitor *monitors_model.MonitorPushDTO
 	}
 
 	monitorDB.LastData = &monitors_model.LastData{
-		CPUUsage:    monitor.LastData.CPUUsage,
-		MemoryUsage: monitor.LastData.MemoryUsage,
+		CPU: &monitors_model.CPU{
+			UsedPercent: monitor.LastData.CPU.UsedPercent,
+		},
+		Memory: &monitors_model.Memory{
+			Total:       monitor.LastData.Memory.Total,
+			Available:   monitor.LastData.Memory.Available,
+			Used:        monitor.LastData.Memory.Used,
+			UsedPercent: monitor.LastData.Memory.UsedPercent,
+		},
+		OS: &monitors_model.OS{
+			Type:            monitor.LastData.OS.Type,
+			Platform:        monitor.LastData.OS.Platform,
+			PlatformFamily:  monitor.LastData.OS.PlatformFamily,
+			PlatformVersion: monitor.LastData.OS.PlatformVersion,
+			KernelVersion:   monitor.LastData.OS.KernelVersion,
+			KernelArch:      monitor.LastData.OS.KernelArch,
+		},
+		Uptime: monitor.LastData.Uptime,
 	}
 
 	err = s.monitorsRepo.UpdateLastData(monitorDB)

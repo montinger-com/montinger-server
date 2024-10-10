@@ -33,11 +33,19 @@ var (
 			Help: "Memory usage percentage",
 		}, []string{"server_name"},
 	)
+
+	memoryUsed = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "memory_used",
+			Help: "Memory used",
+		}, []string{"server_name"},
+	)
 )
 
 func init() {
 	prometheus.MustRegister(cpuUsage)
 	prometheus.MustRegister(memoryUsage)
+	prometheus.MustRegister(memoryUsed)
 
 	monitorsService = *monitors_service.NewMonitorsService()
 }
@@ -57,8 +65,11 @@ func metricsHandler() gin.HandlerFunc {
 
 		for _, monitor := range monitors {
 			if monitor.Type == "server" && monitor.LastData != nil && monitor.LastDataOn != nil && monitor.LastDataOn.After(time.Now().Add(-1*time.Minute)) {
-				memoryUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.MemoryUsage)
-				cpuUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.CPUUsage)
+				memoryUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.Memory.UsedPercent)
+				cpuUsage.WithLabelValues(monitor.ID).Set(monitor.LastData.CPU.UsedPercent)
+
+				memUsed := float64(monitor.LastData.Memory.Used)
+				memoryUsed.WithLabelValues(monitor.ID).Set(memUsed)
 			}
 		}
 
